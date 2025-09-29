@@ -35,45 +35,6 @@ multicompany allowed but not expect False company
 OPW-5036417
 """
 
-
-# should be just one type/company priority... it could work but lifo is applied
-"""
-RESEQUENCE JOURNALS
-
-This could fix a unexepected behaviour related to journal incorrect assignation.
-
-Sometimes when you have many custom journals and you move the priority of them (order), 
-this can change the behaviour of the ORM query, because the standard order is based on: sequence, type, code.
-
-Imagine you have this scenario:
-
-test => SELECT id, name->>'en_US' name,code, sequence FROM account_journal 
-    WHERE type = 'purchase' AND (company_id IN (1) OR company_id IS NULL) ORDER BY sequence,type,code;
- id  |                name                | code  | sequence 
------+------------------------------------+-------+----------
- 111 | Bank                               | INV1  |        5
- 113 | Administrative Expenses            | OTROA |        6
-  11 | Vendor Bills                       | PROV  |        6
-
-if you create a new Vendor Bill, the function _search_default_journal (18.0) will be called and try to 
-search the correct one.
-
-if is not able to choose one, it will do: 
-
-journal = self.env['account.journal'].search(domain, limit=1)
-
-This will choose Bank instead of Vendor Bills, which is incorrect.
-
-We need to ensure that the order is corrrect, and thats the main reason of the existance of this script.
-
-
-Usage:
-just give the journal records to the script and it will do all the necessary... 
-multicompany allowed but not expect False company
-
-OPW-5036417
-"""
-
 # should be just one type/company priority... it could work but lifo is applied
 def resequence_journals(priority_records):
     
